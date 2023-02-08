@@ -76,6 +76,31 @@ IF(NOT LINUX)
   ENDIF()
 ENDIF(NOT LINUX)
 
+
+#   # Execute CMake to generate the makefiles.
+#   set(ENV{PATH} "${OPENMPI_DIR}/bin:$ENV{PATH}")
+#   find_package(OpenMP)
+#   if(OpenMP_CXX_FOUND)
+#     set(LINK_LIBRARIES ${LINK_LIBRARIES} OpenMP::OpenMP_CXX)
+#   endif()
+
+# if(OpenMP_CXX_FOUND)
+# set(LINK_LIBRARIES ${LINK_LIBRARIES} OpenMP::OpenMP_CXX)
+# endif()
+
+find_package( OpenMP )
+if ( OPENMP_FOUND )
+set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} " )
+      include_directories ( ${OpenMP_C_INCLUDE_DIRS} )
+      set(LINK_LIBRARIES OpenMP::OpenMP_CXX)
+      # SET(TulipLibs ${LibTulipCoreName} ${LibTulipOGLName} ${LibTulipGUIName})
+      link_libraries(OpenMP::OpenMP_CXX)
+endif ( )
+
+# if( OPENMP_FOUND )
+#   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
+# endif( OPENMP_FOUND )
+
 ## ========================================================
 ## AppImage build
 ## ========================================================
@@ -177,7 +202,7 @@ ELSE()
   SET(TULIP_BUILD_CORE_ONLY OFF CACHE BOOL "Do you want a minimal build of Tulip (no OpenGL rendering, no Qt gui, no documentation) ? [ON|OFF]")
 ENDIF()
 
-IF(TULIP_BUILD_CORE_ONLY AND LINUX)
+IF(TULIP_BUILD_CORE_ONLY AND UNIX)
 # the macro ADD_CORE_FILES will be used
 # to collect the files needed to build a minimal Tulip
 # in the directory pointed by CMAKE_CURRENT_SOURCE_DIR
